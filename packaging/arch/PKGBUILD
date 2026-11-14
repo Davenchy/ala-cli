@@ -1,0 +1,48 @@
+# Maintainer: Davenchy <firon1222@gmail.com>
+pkgname=ala-cli
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Pin Arch Linux to an Arch Linux Archive (ALA) snapshot'
+arch=('any')
+url='https://github.com/Davenchy/ala-cli'
+license=('MIT')
+depends=(
+  'python'
+  'python-argcomplete'
+  'python-dateparser'
+  'python-feedparser'
+  'python-html2text'
+  'python-shtab'
+)
+makedepends=(
+  'python-build'
+  'python-installer'
+  'python-uv-build'
+  'python-wheel'
+)
+checkdepends=(
+  'python-pytest'
+  'python-argcomplete'
+  'python-dateparser'
+  'python-feedparser'
+  'python-html2text'
+  'python-shtab'
+)
+source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
+# Run `updpkgsums` from this directory before publishing to the AUR.
+sha256sums=('SKIP')
+
+build() {
+  cd "$pkgname-$pkgver"
+  python -m build --wheel --no-isolation
+}
+
+check() {
+  cd "$pkgname-$pkgver"
+  python -m pytest -q
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  python -m installer --destdir="$pkgdir" dist/*.whl
+}

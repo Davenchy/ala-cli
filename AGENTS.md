@@ -12,12 +12,24 @@
 - `uv build` — sdist + wheel via `uv_build` (src layout, module `ala_cli`).
 - CI (`.github/workflows/ci.yml`) runs `uv sync --frozen`, `uv run ruff check .`, and `uv run pytest` on pushes and PRs.
 
+## Releasing
+
+1. `uv version --bump patch` (or `major`/`minor`) and commit.
+2. `git tag "v$(uv version --short)"` and `git push --follow-tags`.
+3. `release.yml` verifies `v<pyproject version> == tag`, runs lint/tests, runs `uv build --no-sources`, and creates the GitHub Release with `dist/*`.
+4. Bump `pkgver` in `packaging/arch/PKGBUILD` and run `updpkgsums` before updating AUR.
+
+There is no PyPI publishing yet; the release workflow has a commented `uv publish` step for when a trusted publisher exists. GitHub Packages cannot host Python wheels (no PyPI registry), so Releases are the distribution channel.
+
 ## Layout
 
 - `src/ala_cli/snapshot.py` — mirrorlist parsing, URL generation, reachability check. `DEFAULT_MIRRORLIST` is hardcoded to `/etc/pacman.d/ala-mirrorlist`.
 - `src/ala_cli/system.py` — `doas`/`sudo` and `paru`/`pacman` wrappers; parses `-Sup`/`-Q` output.
 - `src/ala_cli/alerts/` — Arch news + security advisory feeds (live network).
 - `src/ala_cli/cli/` — argparse setup and one module per command; `errors.py` defines the `AlaError` tree.
+- `.github/workflows/ci.yml` — lint + tests on pushes to `main` and PRs.
+- `.github/workflows/release.yml` — tag-triggered: lint, test, build, GitHub Release with wheel/sdist/`SHA256SUMS`.
+- `packaging/arch/PKGBUILD` — Arch package built from the `v$pkgver` source archive; `pkgver` must be bumped with the release.
 
 ## Non-obvious wiring
 
@@ -30,7 +42,7 @@
 
 ## Testing
 
-- Tests live at the repo root in `tests/` (not in the package) and are excluded from the wheel.
+- Tests live at the repo root in `tests/` (not in the package) and are excluded from the wheel but included in the sdist via `[tool.uv.build-backend] source-include`.
 - Existing coverage is only `get_current_snapshot` with `tmp_path`. For new tests, monkeypatch `ala_cli.system.shutil.which`, `subprocess.run`, `urllib.request.urlopen`, or `feedparser.parse`; do not touch `/etc`, pacman, or the network.
 - `alerts/sources.py` fetches feeds with a 10s timeout and raises `AlertsError` on failure; monkeypatch `ala_cli.alerts.sources.urlopen` (not the real network) when testing it.
 

@@ -1,6 +1,7 @@
 # ala-cli
 
 [![CI](https://github.com/Davenchy/ala-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Davenchy/ala-cli/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Davenchy/ala-cli?label=release)](https://github.com/Davenchy/ala-cli/releases)
 
 A small command-line tool for pinning Arch Linux to a specific
 [Arch Linux Archive](https://archive.archlinux.org/) (ALA) snapshot.
@@ -31,7 +32,9 @@ on a known-good set of package versions.
 
 ## Installation
 
-From source:
+`ala` is Arch-only. Pick whichever channel fits your workflow.
+
+### Run from a source checkout
 
 ```bash
 git clone https://github.com/Davenchy/ala-cli.git
@@ -40,13 +43,98 @@ uv sync
 uv run ala --help
 ```
 
-Install the `ala` command globally:
+### Install from source with uv
+
+Install the latest `main`:
 
 ```bash
-uv tool install .
-# or directly from GitHub:
 uv tool install git+https://github.com/Davenchy/ala-cli.git
 ```
+
+Pin a release tag:
+
+```bash
+uv tool install git+https://github.com/Davenchy/ala-cli.git@v0.1.0
+```
+
+Or install from a local clone:
+
+```bash
+git clone https://github.com/Davenchy/ala-cli.git
+cd ala-cli
+uv tool install .
+```
+
+### Install from a GitHub Release
+
+Every `v*` tag builds a wheel and an sdist and attaches them (plus
+`SHA256SUMS`) to the [releases page](https://github.com/Davenchy/ala-cli/releases).
+Install the wheel directly:
+
+```bash
+uv tool install https://github.com/Davenchy/ala-cli/releases/download/v0.1.0/ala_cli-0.1.0-py3-none-any.whl
+```
+
+Or download it first:
+
+```bash
+gh release download v0.1.0 --repo Davenchy/ala-cli --pattern '*.whl'
+uv tool install ./ala_cli-0.1.0-py3-none-any.whl
+```
+
+> **GitHub Packages** does not provide a PyPI-compatible registry, so Python
+> wheels cannot be published there. The wheel is attached to the GitHub
+> Release instead and is installable with `uv tool install <wheel-url>`.
+
+### Arch Linux package (PKGBUILD)
+
+The [PKGBUILD](packaging/arch/PKGBUILD) builds the package from the tagged
+source archive:
+
+```bash
+git clone https://github.com/Davenchy/ala-cli.git
+cd ala-cli/packaging/arch
+makepkg -si
+```
+
+Once the AUR entry is published, install it with your helper:
+
+```bash
+yay -S ala-cli
+```
+
+Before publishing to the AUR, regenerate the source checksum from
+`packaging/arch`:
+
+```bash
+updpkgsums
+makepkg --printsrcinfo > .SRCINFO
+```
+
+### Uninstall
+
+```bash
+uv tool uninstall ala-cli   # uv tool installs
+sudo pacman -R ala-cli      # PKGBUILD/AUR installs
+```
+
+## Releases
+
+Releases are automated by
+[`.github/workflows/release.yml`](.github/workflows/release.yml). Pushing a
+`v*` tag runs lint and tests, builds the wheel and sdist, generates
+`SHA256SUMS`, and publishes a GitHub Release with those files attached.
+
+Cut a release with:
+
+```bash
+uv version --bump patch
+git commit -am "release: v$(uv version --short)"
+git tag "v$(uv version --short)"
+git push --follow-tags
+```
+
+The tag must match the version in `pyproject.toml`, or the workflow fails.
 
 ## Setup
 

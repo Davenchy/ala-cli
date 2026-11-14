@@ -1,0 +1,27 @@
+pkgbase = ala-cli
+	pkgdesc = Pin Arch Linux to an Arch Linux Archive (ALA) snapshot
+	pkgver = 0.1.0
+	pkgrel = 1
+	url = https://github.com/Davenchy/ala-cli
+	arch = any
+	license = MIT
+	checkdepends = python-pytest
+	checkdepends = python-argcomplete
+	checkdepends = python-dateparser
+	checkdepends = python-feedparser
+	checkdepends = python-html2text
+	checkdepends = python-shtab
+	makedepends = python-build
+	makedepends = python-installer
+	makedepends = python-uv-build
+	makedepends = python-wheel
+	depends = python
+	depends = python-argcomplete
+	depends = python-dateparser
+	depends = python-feedparser
+	depends = python-html2text
+	depends = python-shtab
+	source = ala-cli-0.1.0.tar.gz::https://github.com/Davenchy/ala-cli/archive/refs/tags/v0.1.0.tar.gz
+	sha256sums = SKIP
+
+pkgname = ala-cli
