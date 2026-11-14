@@ -1,0 +1,33 @@
+[project]
+name = "ala-cli"
+version = "0.1.0"
+description = "Pin Arch Linux to an Arch Linux Archive (ALA) snapshot"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Davenchy", email = "firon1222@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "argcomplete>=3.7.2",
+    "dateparser>=1.5.0",
+    "feedparser>=6.0.14",
+    "html2text>=2025.4.15",
+    "shtab>=1.13.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Davenchy/ala-cli"
+
+[project.scripts]
+ala = "ala_cli:main"
+
+[build-system]
+requires = ["uv_build>=0.13.5,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
