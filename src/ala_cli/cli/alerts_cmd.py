@@ -9,7 +9,7 @@ from ala_cli.snapshot import get_current_snapshot
 MAX_SUMMARY_LEN = 240
 
 
-def alerts_cmd(parser: ArgumentParser, args: Namespace) -> None:
+def alerts_cmd(_parser: ArgumentParser, args: Namespace) -> None:
     snapshot = args.date or get_current_snapshot()
     alerts_type = None
     if args.news:
@@ -26,7 +26,8 @@ def alerts_cmd(parser: ArgumentParser, args: Namespace) -> None:
         return
 
     if not alerts:
-        parser.exit(10, f"No alerts found for the snapshot {snapshot:%Y/%m/%d}.\n")
+        print(f"No alerts found for the snapshot {snapshot:%Y/%m/%d}.")
+        return
 
     for alert in alerts:
         print(f"[{alert.type.value.upper()}] {alert.title}")

@@ -1,5 +1,7 @@
 # ala-cli
 
+[![CI](https://github.com/Davenchy/ala-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Davenchy/ala-cli/actions/workflows/ci.yml)
+
 A small command-line tool for pinning Arch Linux to a specific
 [Arch Linux Archive](https://archive.archlinux.org/) (ALA) snapshot.
 
@@ -113,6 +115,15 @@ ala alerts 2026/10/01 --security
 ala updates --json
 ala alerts --json
 ```
+
+### Exit codes
+
+| Code | Meaning |
+|------|---------|
+| 0 | Success (including "no alerts" / "no updates") |
+| 1 | Error: invalid input, write failure, or snapshot not reachable in `set` |
+| 10 | `ala verify`: the snapshot is not reachable |
+| 130 | Interrupted with Ctrl-C |
 
 ## Shell completions
 

@@ -2,6 +2,7 @@ from argparse import ArgumentParser, Namespace
 from collections import Counter
 
 from ala_cli.alerts.service import fetch_alerts
+from ala_cli.errors import AlertsError
 from ala_cli.snapshot import (
     DEFAULT_MIRRORLIST,
     check_remote_snapshot,
@@ -13,7 +14,7 @@ from ala_cli.system import (
 )
 
 
-def status_cmd(_parser: ArgumentParser, _args: Namespace):
+def status_cmd(_parser: ArgumentParser, _args: Namespace) -> None:
     snapshot = get_current_snapshot()
 
     is_reachable = check_remote_snapshot(snapshot)
@@ -21,12 +22,16 @@ def status_cmd(_parser: ArgumentParser, _args: Namespace):
 
     alerts_report = "No reports"
     if is_reachable:
-        alerts = [alert.type.value for alert in fetch_alerts(snapshot)]
-        if alerts:
-            counts = Counter(alerts)
-            alerts_report = ", ".join(
-                [f"{k.title()}: {v}" for (k, v) in counts.items()]
-            )
+        try:
+            alerts = [alert.type.value for alert in fetch_alerts(snapshot)]
+        except AlertsError:
+            alerts_report = "Unavailable (feed error)"
+        else:
+            if alerts:
+                counts = Counter(alerts)
+                alerts_report = ", ".join(
+                    [f"{k.title()}: {v}" for (k, v) in counts.items()]
+                )
 
     data = [
         ("Snapshot", snapshot),

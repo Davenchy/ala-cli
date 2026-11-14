@@ -108,11 +108,14 @@ def define_set_cmd(parser: ArgumentParser) -> None:
     parser.add_argument(
         "--no-verify",
         action="store_true",
-        help="Force setting the valid snapshot date and skip remote verification.",
+        help="Set the snapshot without verifying that it exists remotely.",
     )
     parser.add_argument(
         "date",
-        help='The date to set snapshot to. By default yesterday. E.g.: "2 days ago", "2026/11/11", "yesterday", ...',
+        help=(
+            "The date to set snapshot to. By default yesterday. "
+            'E.g.: "2 days ago", "2026/11/11", "yesterday", ...'
+        ),
         nargs="?",
         default=date.today() - timedelta(days=1),
         type=parse_cli_date,

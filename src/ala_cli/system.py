@@ -54,8 +54,6 @@ def use_package_manager(task: str, capture=False, *args: tuple[str]) -> str:
 
     try:
         return subprocess.run(cmd, check=True, text=True, capture_output=capture).stdout
-    except KeyboardInterrupt:
-        return ""
     except Exception as err:
         raise SystemCommandError(f"Unable to {task}: {err}") from err
 
